@@ -1,6 +1,9 @@
 <template>
   <UPageBody prose>
-    <ContentDoc />
+    <ContentRenderer
+      v-if="page"
+      :value="page"
+    />
 
     <div class="flex flex-row flex-wrap w-2/3 mx-auto my-16 gap-2">
       <div
@@ -32,6 +35,11 @@ const periodesAccumulated = periodes.reduce((acc, el) => {
 }, [0]).slice(1)
 const sum = ref(0)
 periodes.map(el => sum.value += el)
+
+const route = useRoute()
+const { data: page } = await useAsyncData(route.path, () => {
+  return queryCollection('content').path(route.path).first()
+})
 </script>
 
 <style></style>

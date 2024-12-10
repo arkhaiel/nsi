@@ -1,8 +1,9 @@
 <template>
-  <NuxtLayout :appid="appid">
-    <NuxtPage />
-  </NuxtLayout>
-  <UNotifications />
+  <UApp>
+    <NuxtLayout :appid="appid">
+      <NuxtPage />
+    </NuxtLayout>
+  </UApp>
 </template>
 
 <script setup lang="ts">

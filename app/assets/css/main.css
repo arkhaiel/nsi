@@ -1,0 +1,21 @@
+@import "tailwindcss";
+@import "@nuxt/ui-pro";
+
+/* @source "../content"; */
+
+
+@plugin "@tailwindcss/typography";
+
+h1 > a, h2 > a, h3 > a, h4 > a, h5 > a, h6 > a {
+  @apply no-underline;
+} 
+
+pre {
+    @apply bg-[var(--ui-bg-muted)];
+    @apply border border-[var(--ui-border-muted)];
+    @apply my-0;
+}
+
+pre[role="tabpanel"] {
+    @apply rounded-t-none;
+}

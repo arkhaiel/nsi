@@ -1,3 +1,6 @@
+import rehypeKatex from 'rehype-katex'
+import remarkMath from 'remark-math'
+
 const mdSource = process.env.NODE_ENV === 'development'
   ? {
       driver: 'fs',
@@ -10,11 +13,10 @@ const mdSource = process.env.NODE_ENV === 'development'
     }
 
 export default defineNuxtConfig({
-  extends: ['@nuxt/ui-pro'],
   modules: [
     '@nuxthub/core',
     '@nuxt/content',
-    '@nuxt/ui',
+    '@nuxt/ui-pro',
     'nuxt-auth-utils',
     '@pinia/nuxt',
     '@nuxt/image',
@@ -35,26 +37,35 @@ export default defineNuxtConfig({
       ],
     },
   },
+  css: ['~/assets/css/main.css'],
   content: {
-    experimental: {
-      clientDB: true,
+    build: {
+      markdown: {
+        remarkPlugins: {
+          'remark-math': {},
+        },
+        rehypePlugins: {
+          'rehype-katex': {},
+        },
+        highlight: {
+          theme: {
+            // Default theme (same as single string)
+            default: 'github-light',
+            light: 'github-light',
+            // Theme used if `html.dark`
+            dark: 'github-dark',
+            // Theme used if `html.sepia`
+            sepia: 'monokai',
+          },
+          langs: ['py', 'md', 'http'],
+        },
+      },
     },
-    markdown: {
-      remarkPlugins: [
-        'remark-math',
-      ],
-      rehypePlugins: [
-        'rehype-katex',
-      ],
-    },
-    highlight: {
-      langs: ['py', 'md', 'http'],
-    },
-    sources: {
-      content: mdSource,
-    },
+    // database: {
+    //   type: 'd1',
+    //   binding: 'content',
+    // },
   },
-
   runtimeConfig: {
     session: {
       cookie: {

@@ -1,8 +1,8 @@
 <template>
   <div>
-    <UHeader :links="mapContentNavigation((navigation ?? []).map(({ children, ...nav }) => nav))">
+    <UHeader>
       <template #panel>
-        <UNavigationTree :links="mapContentNavigation(navigation ?? [])" />
+        <UContentNavigation :links="navigation ?? []" />
       </template>
       <template #logo>
         <Logo class="block w-auto h-10" />
@@ -11,7 +11,7 @@
       <template #right>
         <UContentSearchButton label="" />
         <ClientOnly>
-          <UColorModeToggle />
+          <UColorModeSwitch />
           <UserButton />
         </ClientOnly>
       </template>
@@ -20,16 +20,14 @@
       <div class="px-8">
         <UPage>
           <template #left>
-            <UAside>
+            <UPageAside>
               <template #top>
                 <UContentSearchButton label="Recherche..." />
               </template>
-              <UNavigationTree
-                :links="mapContentNavigation(path == '/' ? navigation ?? [] : localNav)"
-                :multiple="path == '/' ? false : true"
-                :default-open="false"
+              <UContentNavigation
+                :navigation="navigation"
               />
-            </UAside>
+            </UPageAside>
           </template>
           <slot />
         </UPage>
@@ -40,23 +38,22 @@
       <LazyUContentSearch
         :files="files"
         :navigation="navigation"
-        :links="links"
+        :fuse="{ resultLimit: 42 }"
       />
     </ClientOnly>
   </div>
 </template>
 
 <script lang="ts" setup>
-import type { ParsedContent } from '@nuxt/content'
-
 const path = computed(() => useRoute().path)
-const { data: navigation } = await useAsyncData('navigation', () => fetchContentNavigation())
+const route = useRoute()
+const { data: navigation } = await useAsyncData('navigation', () => queryCollectionNavigation('content'))
 const localNav = computed(() => (navigation.value ?? []).filter(el => el._path == '/' + path.value.split('/')[1]) || [])
-const { data: page } = await useAsyncData('page', () => queryContent(useRoute().path).findOne() || undefined, { watch: [path] })
+const { data: page } = await useAsyncData('page', () => queryCollection('content').route.path.findOne() || undefined, { watch: [route.path] })
 
-const breadcrumb = computed(() => page.value === undefined ? [] : mapContentNavigation(findPageBreadcrumb(navigation.value, page.value)))
+// const breadcrumb = computed(() => page.value === undefined ? [] : mapContentNavigation(findPageBreadcrumb(navigation.value, page.value)))
 
-const { data: files } = useLazyFetch<ParsedContent[]>('/api/search.json', { default: () => [], server: false })
+const { data: files } = await useAsyncData('search', () => queryCollectionSearchSections('content'))
 
 const links = [
   {
