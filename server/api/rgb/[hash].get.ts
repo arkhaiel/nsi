@@ -2,6 +2,17 @@ export default defineEventHandler(async (event) => {
   const hash = getRouterParam(event, 'hash')
   const query = getQuery(event)
 
+  const didHandleCors = handleCors(event, {
+    origin: '*',
+    preflight: {
+      statusCode: 204,
+    },
+    methods: '*',
+  })
+  if (didHandleCors) {
+    return
+  }
+
   if (hash) {
     const data = await hubKV().get(`rgb:${hash}`)
     if (data) {

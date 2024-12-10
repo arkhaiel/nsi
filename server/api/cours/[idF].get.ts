@@ -7,6 +7,17 @@ const createId = init({
 export default defineEventHandler(async (event) => {
   setResponseHeader(event, 'content-type', 'text/plain; charset=utf-8')
 
+  const didHandleCors = handleCors(event, {
+    origin: '*',
+    preflight: {
+      statusCode: 204,
+    },
+    methods: '*',
+  })
+  if (didHandleCors) {
+    return
+  }
+
   await hubKV().set(`api:get:${createId()}`, Date.now(), { ttl: 1800 })
   const apiCalls = await hubKV().keys('api:get')
   if (apiCalls.length >= 10000) {
@@ -31,16 +42,6 @@ export default defineEventHandler(async (event) => {
   if (!fullD || !fullD.includes(':'))
     return createError({ status: 400, message: 'Format invalide.' })
   const [idF, sKey] = fullD.split(':')
-  const didHandleCors = handleCors(event, {
-    origin: '*',
-    preflight: {
-      statusCode: 204,
-    },
-    methods: '*',
-  })
-  if (didHandleCors) {
-    return
-  }
 
   if (await hubKV().has(`cours:${idF}:${sKey}`)) {
     setResponseHeader(event, 'content-type', 'application/json; charset=utf-8')

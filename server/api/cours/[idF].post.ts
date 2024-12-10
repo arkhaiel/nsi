@@ -12,6 +12,17 @@ const createId = init({
 export default defineEventHandler(async (event) => {
   setResponseHeader(event, 'content-type', 'text/plain; charset=utf-8')
 
+  const didHandleCors = handleCors(event, {
+    origin: '*',
+    preflight: {
+      statusCode: 204,
+    },
+    methods: '*',
+  })
+  if (didHandleCors) {
+    return
+  }
+
   const idF = getRouterParam(event, 'idF')
   const bodyData = await readBody(event)
   const { api, ...body } = bodyData
