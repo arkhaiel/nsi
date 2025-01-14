@@ -61,10 +61,10 @@ export default defineNuxtConfig({
         },
       },
     },
-    // database: {
-    //   type: 'd1',
-    //   binding: 'content',
-    // },
+    database: {
+      type: 'd1',
+      binding: 'content',
+    },
   },
   runtimeConfig: {
     session: {
