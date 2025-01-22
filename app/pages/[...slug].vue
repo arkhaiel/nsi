@@ -7,14 +7,12 @@ const { data: page } = await useAsyncData(route.path, () => {
 
 <template>
   <UPage>
-    <UPageBody
-      class="prose dark:prose-invert max-w-none prose-code:text-base"
-    >
+    <UPageBody>
       <article
         v-if="page"
         class="xl:px-16 mx-auto mb-8"
       >
-        <h1>{{ page.title }}</h1>
+        <ProseH1>{{ page.title }}</ProseH1>
         <ContentRenderer :value="page" />
       </article>
     </UPageBody>

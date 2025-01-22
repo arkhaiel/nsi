@@ -3,20 +3,10 @@
     <AppsRgb v-if="appid === 'rgb'" />
     <AppsMd v-else-if="appid === 'md'" />
     <AppsExif v-else-if="appid === 'exif'" />
-
-    <ClientOnly>
-      <LazyUContentSearch
-        :files="files"
-        :navigation="navigation"
-        :links="links"
-      />
-    </ClientOnly>
   </div>
 </template>
 
 <script lang="ts" setup>
-import type { ParsedContent } from '@nuxt/content'
-
 const appid = useAttrs().appid || 'default'
 
 onMounted(() => {
@@ -29,10 +19,6 @@ onMounted(() => {
     })
   }
 })
-
-const { data: files } = useLazyFetch<ParsedContent[]>('/api/search.json', { default: () => [], server: false })
-
-const { data: navigation } = await useAsyncData('navigation', () => fetchContentNavigation())
 
 const links = [
   {

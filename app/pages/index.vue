@@ -1,5 +1,5 @@
 <template>
-  <UPageBody prose>
+  <UPageBody>
     <ContentRenderer
       v-if="page"
       :value="page"

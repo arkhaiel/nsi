@@ -1,6 +1,3 @@
-import rehypeKatex from 'rehype-katex'
-import remarkMath from 'remark-math'
-
 const mdSource = process.env.NODE_ENV === 'development'
   ? {
       driver: 'fs',
@@ -15,8 +12,8 @@ const mdSource = process.env.NODE_ENV === 'development'
 export default defineNuxtConfig({
   modules: [
     '@nuxthub/core',
-    '@nuxt/content',
     '@nuxt/ui-pro',
+    '@nuxt/content',
     'nuxt-auth-utils',
     '@pinia/nuxt',
     '@nuxt/image',
@@ -63,7 +60,7 @@ export default defineNuxtConfig({
     },
     database: {
       type: 'd1',
-      binding: 'content',
+      binding: 'DB',
     },
   },
   runtimeConfig: {

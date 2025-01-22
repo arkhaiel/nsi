@@ -1,10 +1,10 @@
 <template>
   <div>
     <UHeader>
-      <template #panel>
+      <template #content>
         <UContentNavigation :links="navigation ?? []" />
       </template>
-      <template #logo>
+      <template #title>
         <Logo class="block w-auto h-10" />
       </template>
 
@@ -17,7 +17,7 @@
       </template>
     </UHeader>
     <UMain>
-      <div class="px-8">
+      <UContainer>
         <UPage>
           <template #left>
             <UPageAside>
@@ -31,7 +31,7 @@
           </template>
           <slot />
         </UPage>
-      </div>
+      </UContainer>
     </UMain>
 
     <ClientOnly>
@@ -45,13 +45,7 @@
 </template>
 
 <script lang="ts" setup>
-const path = computed(() => useRoute().path)
-const route = useRoute()
 const { data: navigation } = await useAsyncData('navigation', () => queryCollectionNavigation('content'))
-const localNav = computed(() => (navigation.value ?? []).filter(el => el._path == '/' + path.value.split('/')[1]) || [])
-const { data: page } = await useAsyncData('page', () => queryCollection('content').route.path.findOne() || undefined, { watch: [route.path] })
-
-// const breadcrumb = computed(() => page.value === undefined ? [] : mapContentNavigation(findPageBreadcrumb(navigation.value, page.value)))
 
 const { data: files } = await useAsyncData('search', () => queryCollectionSearchSections('content'))
 
