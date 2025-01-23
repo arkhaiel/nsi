@@ -161,43 +161,16 @@
             </UCard>
           </div>
         </div>
-        <UModal v-model:open="isOpen">
-          <UCard>
-            <div class="flex flex-col items-center">
-              <p>Votre image est désormais disponible à l'adresse suivante :</p>
-              <div class="flex justify-between items-center gap-2">
-                <span>https://rgb.nsi.rocks/{{ code }}</span>
-                <UButton
-                  icon="ion:md-clipboard"
-                  class="text-lg my-4"
-                  variant="ghost"
-                  @click="clipCode"
-                />
-              </div>
-
-              <figure>
-                <img
-                  :src="`/api/rgb/${code}?img`"
-                  alt="Image"
-                >
-                <figcaption class="flex justify-center my-4">
-                  <UButton
-                    variant="ghost"
-                    @click="getPNG"
-                  >
-                    Télécharger
-                  </UButton>
-                </figcaption>
-              </figure>
-            </div>
-          </UCard>
-        </UModal>
       </ClientOnly>
     </UContainer>
   </UMain>
 </template>
 
 <script lang="ts" setup>
+import { LazyAppsRgbModal } from '#components'
+
+const modal = useModal()
+
 defineShortcuts({
   arrowLeft: () => move('left'),
   arrowRight: () => move('right'),
@@ -274,6 +247,14 @@ const code = ref('')
 
 const dur = ref(1000)
 const currImg = ref(0)
+
+function open() {
+  modal.open(LazyAppsRgbModal, {
+    description: 'And you can even provide a description!',
+    code: code.value,
+    onGetPNG: getPNG,
+  })
+}
 
 const items = [
   {
@@ -541,21 +522,6 @@ const addWCopyImg = (imgId) => {
   cpImg(imgId)
 }
 
-const clipCode = async () => {
-  navigator.clipboard
-    .writeText(`https://rgb.nsi.rocks/${code.value}`)
-    .then(() => {
-      toast.add({
-        title: 'Lien copié dans le presse-papier',
-      })
-    })
-    .catch(() => {
-      toast.add({
-        title: 'Impossible de copier le lien',
-      })
-    })
-}
-
 const resize = (updown: string) => {
   if (updown === 'up' && ca.value < (isKonamiCode.value ? 20 : 10)) {
     const backup = toRaw(data.value)
@@ -648,7 +614,7 @@ const shareGrid = async () => {
     },
   })
   code.value = res
-  isOpen.value = true
+  open()
 }
 
 const getPNG = () => {

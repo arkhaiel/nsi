@@ -1,6 +1,6 @@
 <template>
   <UModal>
-    <UCard>
+    <template #footer>
       <div class="flex flex-col items-center">
         <p>Votre image est désormais disponible à l'adresse suivante :</p>
         <div class="flex justify-between items-center gap-2">
@@ -28,21 +28,42 @@
           </figcaption>
         </figure>
       </div>
-    </UCard>
+    </template>
   </UModal>
 </template>
 
 <script lang="ts" setup>
-const modal = useModal()
+const toast = useToast()
 
-defineProps<{
+const props = defineProps<{
   code: string
 }>()
 
-const emit = defineEmits(['success'])
+const emit = defineEmits(['getPNG'])
 
-function onSuccess() {
-  emit('success')
+function getPNG() {
+  emit('getPNG')
+}
+
+const clipCode = async () => {
+  if (navigator.clipboard) {
+    try {
+      await navigator.clipboard.writeText(`https://rgb.nsi.rocks/${props.code}`)
+      toast.add({
+        title: 'Lien copié dans le presse-papier',
+      })
+    }
+    catch (error) {
+      toast.add({
+        title: 'Impossible de copier le lien',
+      })
+    }
+  }
+  else {
+    toast.add({
+      title: 'Le presse-papier n\'est pas pris en charge',
+    })
+  }
 }
 </script>
 
