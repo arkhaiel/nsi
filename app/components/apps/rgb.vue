@@ -1,70 +1,68 @@
 <template>
-  <ClientOnly>
-    <div
-      v-if="isGridReady"
-      class="flex flex-col-reverse md:flex-row items-start md:items-center md:h-[100vh] md:max-w-[100vw] justify-center items-center mb-8"
-    >
-      <div class="grow flex flex-row justify-center items-center max-w-[800px] p-8">
-        <canvas
-          ref="canvas"
-          :width="canvasWidth+2*gutter"
-          :height="canvasHeight+2*gutter"
-          class="max-w-full max-h-[90vh]"
-          @pointerdown.prevent="canvasMouseDown"
-          @pointermove.prevent="canvasMouseMove"
-          @pointerup.prevent="canvasMouseUp"
-          @touchmove.prevent
-        />
-      </div>
-      <div class="w-full md:max-h-[100vh] md:w-fit md:self-start flex flex-col gap-2 p-0 sm:p-4">
-        <AppsRgbToolbar
-          :can-apply="mode === 1"
-          :canup="ca < (isKonamiCode ? 20 : 10) && images.length === 1"
-          :candown="ca > 1 && images.length === 1"
-          @reset-cases="resetCases"
-          @apply-color="resetCases(data[curr])"
-          @get-png="getPNG"
-          @size-up="resize('up')"
-          @size-down="resize('down')"
-          @share="shareGrid"
-        />
-        <UTabs
-          v-model="mode"
-          :items="items"
-          class="mb-2 px-4"
+  <UHeader />
+  <UMain>
+    <UContainer>
+      <ClientOnly>
+        <div
+          v-if="isGridReady"
+          class="flex flex-col-reverse md:flex-row items-start md:items-center md:h-[100vh] md:max-w-[100vw] justify-center items-center mb-8"
         >
-          <template #item="{ item }">
-            <template v-if="item.key === 'rgb'">
-              <UTooltip
-                text="Passer de RGB à hexadécimal"
-                class="flex justify-center cursor-pointer"
-              >
-                <div
-                  class="font-semibold text-xl"
-                  @click="currCol += 1"
+          <div class="grow flex flex-row justify-center items-center max-w-[800px] p-8">
+            <canvas
+              ref="canvas"
+              :width="canvasWidth+2*gutter"
+              :height="canvasHeight+2*gutter"
+              class="max-w-full max-h-[90vh]"
+              @pointerdown.prevent="canvasMouseDown"
+              @pointermove.prevent="canvasMouseMove"
+              @pointerup.prevent="canvasMouseUp"
+              @touchmove.prevent
+            />
+          </div>
+          <div class="w-full md:max-h-[100vh] md:w-fit md:self-start flex flex-col gap-2 p-0 sm:p-4">
+            <AppsRgbToolbar
+              :can-apply="mode === 1"
+              :canup="ca < (isKonamiCode ? 20 : 10) && images.length === 1"
+              :candown="ca > 1 && images.length === 1"
+              @reset-cases="resetCases"
+              @apply-color="resetCases(data[curr])"
+              @get-png="getPNG"
+              @size-up="resize('up')"
+              @size-down="resize('down')"
+              @share="shareGrid"
+            />
+            <UTabs
+              v-model="mode"
+              :items="items"
+              class="mb-2 px-4"
+            >
+              <template #rgb="{ item }">
+                <UTooltip
+                  text="Passer de RGB à hexadécimal"
+                  class="flex justify-center cursor-pointer"
                 >
-                  <span v-if="currCol % 2 === 0">r: {{ data[curr].r }}, g: {{ data[curr].g }}, b: {{ data[curr].b }}</span>
-                  <span v-if="currCol % 2 === 1"># {{ toHex(data[curr]) }}</span>
-                </div>
-              </UTooltip>
-              <div>
-                <UFormGroup
-                  v-for="a in sliders"
-                  :key="a"
-                  :label="a.label"
-                >
-                  <URange
+                  <div
+                    class="font-semibold text-xl"
+                    @click="currCol += 1"
+                  >
+                    <span v-if="currCol % 2 === 0">r: {{ data[curr].r }}, g: {{ data[curr].g }}, b: {{ data[curr].b }}</span>
+                    <span v-if="currCol % 2 === 1">#{{ toHex(data[curr]) }}</span>
+                  </div>
+                </UTooltip>
+                <div>
+                  <USlider
+                    v-for="a in sliders"
+                    :key="a.key"
                     v-model="data[curr][a.key]"
-                    :color="a.color"
+                    :color="'neutral'"
                     :step="1"
                     :min="0"
                     :max="255"
+                    class="my-8"
                   />
-                </UFormGroup>
-                <UFormGroup label="Toutes">
-                  <URange
+                  <USlider
                     v-model="allColors"
-                    color="teal"
+                    color="neutral"
                     :step="1"
                     :min="0"
                     :max="255"
@@ -72,131 +70,131 @@
                       data[curr] = { r: allColors, g: allColors, b: allColors }
                     "
                   />
-                </UFormGroup>
+                </div>
+              </template>
+            </UTabs>
+            <UCard
+              class="hidden md:block grow overflow-y-scroll"
+              :ui="{ body: { base: 'flex flex-col' } }"
+            >
+              <template #header>
+                <div class="flex flex-row items-center">
+                  <h3 class="grow">
+                    Images
+                  </h3>
+                  <UInput
+                    v-model="dur"
+                    class="max-w-16"
+                  />
+                  <UTooltip
+                    text="Dupliquer l'image courante"
+                    :popper="{ arrow: true }"
+                  >
+                    <UButton
+                      icon="ion:md-copy"
+                      variant="ghost"
+                      class="text-lg"
+                      @click="addWCopyImg(currImg)"
+                    />
+                  </UTooltip>
+                  <UTooltip
+                    text="Ajouter une image vide"
+                    :popper="{ arrow: true }"
+                  >
+                    <UButton
+                      icon="ion:md-add"
+                      variant="ghost"
+                      class="text-lg"
+                      @click="addImg"
+                    />
+                  </UTooltip>
+                </div>
+              </template>
+
+              <div
+                v-for="img in images"
+                :key="img.id"
+                class="flex flex-row justify-between w-52"
+              >
+                <div
+                  class="flex items-center rounded-md p-2 gap-2 cursor-pointer text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white w-36"
+                  @click="img.click"
+                >
+                  <UIcon
+                    :name="img.icon"
+                    class="w-5 h-5"
+                    :class="img.id === currImg ? 'text-primary-500' : ''"
+                  />
+                  <span
+                    class="grow"
+                    :class="img.id === currImg ? 'text-primary-500' : ''"
+                  >{{ img.label }}</span>
+                </div>
+                <div>
+                  <UTooltip
+                    v-if="images.length > 1 && img.id !== currImg"
+                    text="Copier les pixels dans l'image actuelle"
+                    :popper="{ arrow: true }"
+                  >
+                    <UButton
+                      icon="ion:arrow-up-right-box-outline"
+                      variant="ghost"
+                      class="text-lg"
+                      :class="img.id === 0 ? 'mr-8' : ''"
+                      @click="cpImg(img.id)"
+                    />
+                  </UTooltip>
+                  <UTooltip
+                    v-if="img.id > 0"
+                    text="Supprimer l'image"
+                    :popper="{ arrow: true }"
+                  >
+                    <UButton
+                      icon="ion:trash-outline"
+                      variant="ghost"
+                      class="text-lg"
+                      @click="delImg(img.id)"
+                    />
+                  </UTooltip>
+                </div>
               </div>
-            </template>
-          </template>
-        </UTabs>
-        <UCard
-          class="hidden md:block grow overflow-y-scroll"
-          :ui="{ body: { base: 'flex flex-col' } }"
-        >
-          <template #header>
-            <div class="flex flex-row items-center">
-              <h3 class="grow">
-                Images
-              </h3>
-              <UInput
-                v-model="dur"
-                class="max-w-16"
-              />
-              <UTooltip
-                text="Dupliquer l'image courante"
-                :popper="{ arrow: true }"
-              >
-                <UButton
-                  icon="ion:md-copy"
-                  variant="ghost"
-                  class="text-lg"
-                  @click="addWCopyImg(currImg)"
-                />
-              </UTooltip>
-              <UTooltip
-                text="Ajouter une image vide"
-                :popper="{ arrow: true }"
-              >
-                <UButton
-                  icon="ion:md-add"
-                  variant="ghost"
-                  class="text-lg"
-                  @click="addImg"
-                />
-              </UTooltip>
-            </div>
-          </template>
-
-          <div
-            v-for="img in images"
-            :key="img.id"
-            class="flex flex-row justify-between w-52"
-          >
-            <div
-              class="flex items-center rounded-md p-2 gap-2 cursor-pointer text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white w-36"
-              @click="img.click"
-            >
-              <UIcon
-                :name="img.icon"
-                class="w-5 h-5"
-                :class="img.id === currImg ? 'text-primary-500' : ''"
-              />
-              <span
-                class="grow"
-                :class="img.id === currImg ? 'text-primary-500' : ''"
-              >{{ img.label }}</span>
-            </div>
-            <div>
-              <UTooltip
-                v-if="images.length > 1 && img.id !== currImg"
-                text="Copier les pixels dans l'image actuelle"
-                :popper="{ arrow: true }"
-              >
-                <UButton
-                  icon="ion:arrow-up-right-box-outline"
-                  variant="ghost"
-                  class="text-lg"
-                  :class="img.id === 0 ? 'mr-8' : ''"
-                  @click="cpImg(img.id)"
-                />
-              </UTooltip>
-              <UTooltip
-                v-if="img.id > 0"
-                text="Supprimer l'image"
-                :popper="{ arrow: true }"
-              >
-                <UButton
-                  icon="ion:trash-outline"
-                  variant="ghost"
-                  class="text-lg"
-                  @click="delImg(img.id)"
-                />
-              </UTooltip>
-            </div>
+            </UCard>
           </div>
-        </UCard>
-      </div>
-    </div>
-    <UModal v-model="isOpen">
-      <UCard>
-        <div class="flex flex-col items-center">
-          <p>Votre image est désormais disponible à l'adresse suivante :</p>
-          <div class="flex justify-between items-center gap-2">
-            <span>https://rgb.nsi.rocks/{{ code }}</span>
-            <UButton
-              icon="ion:md-clipboard"
-              class="text-lg my-4"
-              variant="ghost"
-              @click="clipCode"
-            />
-          </div>
-
-          <figure>
-            <img
-              :src="`/api/rgb/${code}?img`"
-              alt="Image"
-            >
-            <figcaption class="flex justify-center my-4">
-              <UButton
-                variant="ghost"
-                @click="getPNG"
-              >
-                Télécharger
-              </UButton>
-            </figcaption>
-          </figure>
         </div>
-      </UCard>
-    </UModal>
-  </ClientOnly>
+        <UModal v-model:open="isOpen">
+          <UCard>
+            <div class="flex flex-col items-center">
+              <p>Votre image est désormais disponible à l'adresse suivante :</p>
+              <div class="flex justify-between items-center gap-2">
+                <span>https://rgb.nsi.rocks/{{ code }}</span>
+                <UButton
+                  icon="ion:md-clipboard"
+                  class="text-lg my-4"
+                  variant="ghost"
+                  @click="clipCode"
+                />
+              </div>
+
+              <figure>
+                <img
+                  :src="`/api/rgb/${code}?img`"
+                  alt="Image"
+                >
+                <figcaption class="flex justify-center my-4">
+                  <UButton
+                    variant="ghost"
+                    @click="getPNG"
+                  >
+                    Télécharger
+                  </UButton>
+                </figcaption>
+              </figure>
+            </div>
+          </UCard>
+        </UModal>
+      </ClientOnly>
+    </UContainer>
+  </UMain>
 </template>
 
 <script lang="ts" setup>
@@ -270,7 +268,7 @@ const isGridReady = computed(() => {
 const base = { r: 0, g: 0, b: 0 }
 const allColors = ref(0)
 const curr = ref(1)
-const mode = ref(0)
+const mode = ref('0')
 const isOpen = ref(false)
 const code = ref('')
 
@@ -280,10 +278,12 @@ const currImg = ref(0)
 const items = [
   {
     key: 'bw',
+    slot: 'bw',
     label: 'Noir et blanc',
   },
   {
     key: 'rgb',
+    slot: 'rgb',
     label: 'Couleurs',
   },
 ]

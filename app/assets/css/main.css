@@ -8,3 +8,8 @@
 :root {
 --ui-container: var(--container-8xl);
 }
+
+.text-3xl {
+    font-size: var(--text-3xl);
+    line-height: var(--tw-leading, var(--text-3xl--line-height));
+}

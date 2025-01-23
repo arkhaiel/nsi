@@ -16,7 +16,6 @@ export default defineNuxtConfig({
     '@nuxt/content',
     'nuxt-auth-utils',
     '@pinia/nuxt',
-    '@nuxt/image',
     '@nuxt/scripts',
     '@nuxt/icon',
     '@nuxt/eslint',
@@ -78,7 +77,7 @@ export default defineNuxtConfig({
   hub: {
     database: true,
     kv: true,
-    // cache: true,
+    blob: true,
   },
   eslint: {
     config: {
@@ -86,6 +85,12 @@ export default defineNuxtConfig({
         quotes: 'single',
       },
     },
+  },
+  icon: {
+    customCollections: [{
+      prefix: 'custom',
+      dir: './app/assets/icons',
+    }],
   },
   // icon: {
   //   clientBundle: {

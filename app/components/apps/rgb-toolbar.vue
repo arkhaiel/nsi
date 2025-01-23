@@ -2,7 +2,7 @@
   <div class="m-auto w-fit my-4 flex flex-col items-end">
     <ClientOnly>
       <div class="flex flex-row items-center gap-4">
-        <UColorModeToggle />
+        <UColorModeSwitch />
         <UserButton redirect-app="rgb" />
       </div>
     </ClientOnly>

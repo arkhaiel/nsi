@@ -19,16 +19,6 @@
     <UMain>
       <UContainer>
         <UPage>
-          <template #left>
-            <UPageAside>
-              <template #top>
-                <UContentSearchButton label="Recherche..." />
-              </template>
-              <UContentNavigation
-                :navigation="navigation.filter((el) => el.path.startsWith('/' + route.path.split('/')[1]))"
-              />
-            </UPageAside>
-          </template>
           <slot />
         </UPage>
       </UContainer>
