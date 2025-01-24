@@ -1,10 +1,25 @@
 <template>
   <UPageBody>
-    <ContentRenderer
-      v-if="page"
-      :value="page"
-    />
-
+    <UPageGrid class="lg:grid-cols-2">
+      <UPageCard
+        title="NSI"
+        description="Numérique et Sciences Informatiques. Cette matière est enseignée en classe de première et de terminale."
+        icon="i-simple-icons-tailwindcss"
+        variant="subtle"
+        orientation="horizontal"
+      >
+        <UPageAnchors :links="linksnsi" />
+      </UPageCard>
+      <UPageCard
+        title="SNT"
+        description="Sciences Numériques et Technologie. Cette matière est enseignée en classe de seconde."
+        icon="i-simple-icons-tailwindcss"
+        variant="subtle"
+        orientation="horizontal"
+      >
+        <UPageAnchors :links="linkssnt" />
+      </UPageCard>
+    </UPageGrid>
     <div class="flex flex-row flex-wrap w-2/3 mx-auto my-16 gap-2">
       <div
         v-for="i in sum"
@@ -13,25 +28,6 @@
         :class="[periodesAccumulated.findIndex(el => el >= i) % 2 == 0 ? 'bg-blue-400' : 'bg-slate-700', i === semaine ? 'ring-2 ring-offset-2' : '']"
       />
     </div>
-
-    <UPageGrid>
-      <UPageCard
-        title="SNT"
-        description="Sciences Numériques et Technologie. Cette matière est enseignée en classe de seconde."
-        icon="i-simple-icons-tailwindcss"
-        orientation="horizontal"
-      >
-        <UPageAnchors :links="linkssnt" />
-      </UPageCard>
-      <UPageCard
-        title="NSI"
-        description="Numérique et Sciences Informatiques. Cette matière est enseignée en classe de première et de terminale."
-        icon="i-simple-icons-tailwindcss"
-        orientation="horizontal"
-      >
-        <UPageAnchors :links="linksnsi" />
-      </UPageCard>
-    </UPageGrid>
   </UPageBody>
 </template>
 
@@ -65,6 +61,11 @@ const linksnsi = ref([
     label: 'Architecture',
     icon: 'i-lucide-cpu',
     to: '/nsi/architecture',
+  },
+  {
+    label: 'Linux',
+    icon: 'i-devicon-linux',
+    to: '/nsi/linux',
   },
   {
     label: 'Python',

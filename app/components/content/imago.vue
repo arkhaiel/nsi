@@ -2,7 +2,7 @@
   <ClientOnly>
     <figure>
       <img
-        :src="`/${ld_src}`"
+        :src="`/images/${ld_src}`"
         style="margin: auto;"
         :width="iwidth"
       >
@@ -16,6 +16,10 @@
 <script lang="ts" setup>
 const props = defineProps({
   src: String,
+  nodark: {
+    type: Boolean,
+    default: false,
+  },
   iwidth: {
     type: Number,
     default: 500,
