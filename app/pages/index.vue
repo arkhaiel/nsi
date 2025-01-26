@@ -93,8 +93,13 @@ const linksnsi = ref([
 
 const linkssnt = ref([
   {
-    label: 'Web',
+    label: 'Création de sites',
     icon: 'i-vscode-icons-file-type-html',
+    to: '/snt/cds',
+  },
+  {
+    label: 'Web et données',
+    icon: 'i-lucide-globe',
     to: '/snt/web',
   },
   {
