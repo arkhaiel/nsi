@@ -27,16 +27,24 @@ const dada = datest?.children.find(el => el.path == route.path)
         <div v-else>
           <div class="flex flex-row justify-between mb-8">
             <div>
-              <ProseH1 class="text-5xl mb-4">
-                {{ page.title }}
+              <ProseH1 class="text-3xl md:text-5xl mb-4 flex items-center gap-4">
+                <div class="md:hidden flex items-center">
+                  <UIcon
+                    :name="page.icon"
+                    class="h-full m-auto"
+                  />
+                </div>
+                <span>{{ page.title }}</span>
               </ProseH1>
               <p>{{ page.description }}</p>
             </div>
-            <UIcon
-              :name="page.icon"
-              class="sm:m-8 m-0"
-              size="90"
-            />
+            <div class="md:block hidden">
+              <UIcon
+                :name="page.icon"
+                class="sm:m-8 m-0"
+                size="90"
+              />
+            </div>
           </div>
 
           <UPageList v-if="page.landing && dada?.children">
@@ -64,11 +72,10 @@ const dada = datest?.children.find(el => el.path == route.path)
       </article>
     </UPageBody>
     <template
-      v-if="!page?.landing"
+      v-if="!page?.landing && page?.body?.toc?.links && page?.body?.toc?.links?.length > 0"
       #right
     >
       <UContentToc
-        v-if="page?.body?.toc"
         :links="page.body.toc.links"
         title="Sommaire"
       />

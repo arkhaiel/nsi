@@ -26,6 +26,7 @@
               </template>
               <UContentNavigation
                 :navigation="navigation.filter((el) => el.path.startsWith('/' + route.path.split('/')[1]))[0]?.children"
+                highlight
               />
             </UPageAside>
           </template>
@@ -47,7 +48,7 @@
 <script lang="ts" setup>
 const route = useRoute()
 
-const { data: navigation } = await useAsyncData('navigation', () => queryCollectionNavigation('content'))
+const { data: navigation } = await useAsyncData('navigation', () => queryCollectionNavigation('content', ['icon']))
 
 const { data: files } = await useAsyncData('search', () => queryCollectionSearchSections('content'))
 
