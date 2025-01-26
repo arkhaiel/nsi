@@ -17,26 +17,54 @@ const dada = datest?.children.find(el => el.path == route.path)
         v-if="page"
         class="xl:px-16 mx-auto mb-8"
       >
-        <ProseH1 v-if="!page.stem.endsWith('index')">
+        <ProseH1 v-if="!page.landing">
           {{ page.title }}
         </ProseH1>
-        <ContentRenderer :value="page" />
+        <ContentRenderer
+          v-if="!page.landing"
+          :value="page"
+        />
+        <div v-else>
+          <div class="flex flex-row justify-between mb-8">
+            <div>
+              <ProseH1 class="text-5xl mb-4">
+                {{ page.title }}
+              </ProseH1>
+              <p>{{ page.description }}</p>
+            </div>
+            <UIcon
+              :name="page.icon"
+              class="sm:m-8 m-0"
+              size="90"
+            />
+          </div>
 
-        <UPageList v-if="page.stem.endsWith('index') && dada.children">
-          <UPageCard
-            v-for="el in dada.children"
-            :key="el.id"
-            variant="ghost"
-            orientation="vertical"
-            :to="el.path"
-            :title="el.title"
-            :description="el.description"
-          />
-        </UPageList>
+          <UPageList v-if="page.landing && dada?.children">
+            <UPageCard
+              v-for="el in dada.children"
+              :key="el.id"
+              variant="subtle"
+              orientation="vertical"
+              :to="el.path"
+              :description="el.description"
+              class="rounded-none"
+            >
+              <template #title>
+                <div class="flex items-center">
+                  <icon
+                    name="i-lucide-notebook-text"
+                    class="mr-2"
+                  />
+                  {{ el.title }}
+                </div>
+              </template>
+            </UPageCard>
+          </UPageList>
+        </div>
       </article>
     </UPageBody>
     <template
-      v-if="!page.stem.endsWith('index')"
+      v-if="!page?.landing"
       #right
     >
       <UContentToc

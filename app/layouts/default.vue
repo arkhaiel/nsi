@@ -25,7 +25,7 @@
                 <UContentSearchButton label="Recherche..." />
               </template>
               <UContentNavigation
-                :navigation="navigation.filter((el) => el.path.startsWith('/' + route.path.split('/')[1]))"
+                :navigation="navigation.filter((el) => el.path.startsWith('/' + route.path.split('/')[1]))[0]?.children"
               />
             </UPageAside>
           </template>

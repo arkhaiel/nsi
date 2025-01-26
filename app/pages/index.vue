@@ -100,7 +100,7 @@ const linkssnt = ref([
   {
     label: 'Images numériques',
     icon: 'i-vscode-icons-file-type-image',
-    to: '/nsi/photo',
+    to: '/snt/photo',
   },
   {
     label: 'Capytale',
